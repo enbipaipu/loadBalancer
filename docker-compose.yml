@@ -2,8 +2,8 @@ services:
     django:
         build: ./django
         command: uvicorn config.asgi:application --host 0.0.0.0 --port 8000
-        ports:
-            - 8000:8000
+        expose:
+            - 8000
         volumes:
             - ./src:/code
         depends_on:
@@ -16,7 +16,15 @@ services:
             - POSTGRES_PASSWORD=password
             - POSTGRES_USER=test
             - POSTGRES_DB=testdb
-        
+    nginx:
+        image: nginx:latest
+        ports:
+            - 8080:80
+        volumes:
+            - ./nginx:/etc/nginx/conf.d
+            - ./src/collected_static:/static
+        depends_on:
+            - django
 
 volumes:
   db-store:
