@@ -1,9 +1,18 @@
 services:
-    django:
+    django1:
         build: ./django
         command: uvicorn config.asgi:application --host 0.0.0.0 --port 8000
         expose:
             - 8000
+        volumes:
+            - ./src:/code
+        depends_on:
+            - db
+    django2:
+        build: ./django
+        command: uvicorn config.asgi:application --host 0.0.0.0 --port 8001
+        expose:
+            - 8001
         volumes:
             - ./src:/code
         depends_on:
@@ -24,7 +33,8 @@ services:
             - ./nginx:/etc/nginx/conf.d
             - ./src/collected_static:/static
         depends_on:
-            - django
+            - django1
+            - django2
 
 volumes:
   db-store:
